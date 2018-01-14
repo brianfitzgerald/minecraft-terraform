@@ -9,6 +9,11 @@ variable "profile" {
 }
 
 variable "minecraft_tag" {
-    type = "string"
-    default = "Minecraft"
+  type = "string"
+  default = "Minecraft"
+}
+
+variable "keypair_name" {
+  type = "string"
+  default = "minecraft"
 }

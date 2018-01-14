@@ -79,20 +79,49 @@ resource "aws_security_group" "allow_all" {
 resource "aws_instance" "minecraft_instance" {
   ami             = "ami-c58c1dd3"
   instance_type   = "t2.micro"
-  security_groups = ["${aws_security_group.allow_all.id}"]
 
   tags {
     Name = "${var.minecraft_tag}"
   }
 
   user_data            = "${file("setup.sh")}"
-  key_name             = "Terraformkey"
-  depends_on           = ["aws_internet_gateway.gw"]
+  key_name             = "${var.keypair_name}"
+
   subnet_id            = "${aws_subnet.main.id}"
-  iam_instance_profile = "s3"
+  security_groups = ["${aws_security_group.allow_all.id}"]
+
+  iam_instance_profile = "${aws_iam_instance_profile.mc_profile.name}"
 }
 
-resource "aws_eip_association" "eip_assoc" {
-  instance_id   = "${aws_instance.minecraft_instance.id}"
-  allocation_id = "eipalloc-94ce0aa4"
+resource "aws_eip" "mc_ip" {
+  vpc = true
+
+  instance = "${aws_instance.minecraft_instance.id}"
+  depends_on = ["aws_internet_gateway.gw"]
+}
+
+resource "aws_iam_instance_profile" "mc_profile" {
+  name  = "test_profile"
+  role = "${aws_iam_role.s3_access.name}"
+}
+
+resource "aws_iam_role" "s3_access" {
+  name = "s3_access"
+  path = "/"
+
+  assume_role_policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Action": "sts:AssumeRole",
+            "Principal": {
+               "Service": "ec2.amazonaws.com"
+            },
+            "Effect": "Allow",
+            "Sid": ""
+        }
+    ]
+}
+EOF
 }
