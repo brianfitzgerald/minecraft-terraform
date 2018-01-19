@@ -9,13 +9,13 @@ resource "aws_vpc" "main" {
   enable_dns_support = true
 
   tags {
-    Name = "${var.minecraft_tag}"
+    Name = "${var.server_name}"
   }
 }
 
 resource "aws_subnet" "main" {
   tags {
-    Name = "${var.minecraft_tag}"
+    Name = "${var.server_name}"
   }
 
   vpc_id                  = "${aws_vpc.main.id}"
@@ -27,7 +27,7 @@ resource "aws_internet_gateway" "gw" {
   vpc_id = "${aws_vpc.main.id}"
 
   tags {
-    Name = "${var.minecraft_tag}"
+    Name = "${var.server_name}"
   }
 }
 
@@ -35,7 +35,7 @@ resource "aws_route_table" "main" {
   vpc_id = "${aws_vpc.main.id}"
 
   tags {
-    Name = "${var.minecraft_tag}"
+    Name = "${var.server_name}"
   }
 
   route {
@@ -81,7 +81,7 @@ resource "aws_instance" "minecraft_instance" {
   instance_type   = "t2.micro"
 
   tags {
-    Name = "${var.minecraft_tag}"
+    Name = "${var.server_name}-server-instance"
   }
 
   user_data            = "${file("setup.sh")}"
@@ -90,18 +90,11 @@ resource "aws_instance" "minecraft_instance" {
   subnet_id            = "${aws_subnet.main.id}"
   security_groups = ["${aws_security_group.allow_all.id}"]
 
-  iam_instance_profile = "${aws_iam_instance_profile.mc_profile.name}"
+  iam_instance_profile = "${aws_iam_instance_profile.minecraft_instance_profile.name}"
 }
 
-resource "aws_eip" "mc_ip" {
-  vpc = true
-
-  instance = "${aws_instance.minecraft_instance.id}"
-  depends_on = ["aws_internet_gateway.gw"]
-}
-
-resource "aws_iam_instance_profile" "mc_profile" {
-  name  = "test_profile"
+resource "aws_iam_instance_profile" "minecraft_instance_profile" {
+  name  = "minecraft_instance_profile"
   role = "${aws_iam_role.s3_access.name}"
 }
 
@@ -124,4 +117,18 @@ resource "aws_iam_role" "s3_access" {
     ]
 }
 EOF
+}
+
+# add s3 access policy
+
+resource "aws_eip" "mc_ip" {
+  vpc = true
+
+  instance = "${aws_instance.minecraft_instance.id}"
+  depends_on = ["aws_internet_gateway.gw"]
+}
+
+resource "aws_s3_bucket" "server_backup" {
+  bucket = "${var.server_name}_mc_server_backup"
+  acl = "private"
 }

@@ -8,12 +8,12 @@ variable "profile" {
   default = "personal"
 }
 
-variable "minecraft_tag" {
+variable "server_name" {
   type = "string"
-  default = "Minecraft"
+  default = "briantown"
 }
 
 variable "keypair_name" {
   type = "string"
-  default = "minecraft"
+  default = "minecraft_ec2"
 }
