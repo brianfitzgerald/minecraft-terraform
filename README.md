@@ -15,4 +15,5 @@ You will need to generate your own keypair, and configure that as a variable
 
 ## Todo
 
-* startup command, that downloads minecraft, sets the eula, and does automated backups to the s3 bucket 
+* startup command, that downloads minecraft, sets the eula, and does automated backups to the s3 bucket
+* domain name redirect
