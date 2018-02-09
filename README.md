@@ -1,5 +1,9 @@
 # Minecraft on AWS
 
+A project I did during personal dev to learn EC2 fundamentals.
+
+## Setting up
+
 You will need to generate your own keypair, and configure that as a variable
 
 * generate resources
