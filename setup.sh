@@ -1,19 +1,13 @@
-#!/bin/sh
+# Download Java
+wget --no-cookies \
+--no-check-certificate \
+--header "Cookie: oraclelicense=accept-securebackup-cookie" \
+http://download.oracle.com/otn-pub/java/jdk/8u171-b11/512cd62ec5174c3487ac17c61aaa89e8/jdk-8u171-linux-x64.rpm
 
-echo Updating Java...
+# Install Java
+sudo rpm -i jdk-8u171-linux-x64.rpm
 
-sudo yum install java-1.8.0-openjdk.x86_64
-sudo alternatives --set java /usr/lib/jvm/jre-1.8.0-openjdk.x86_64/bin/java
-
-echo "Which version of minecraft server do you want to install? e.g. 1.9.2"
-read VER
-
-echo Installing Minecraft...
-
-wget "https://s3.amazonaws.com/Minecraft.Download/versions/$VER/minecraft_server.$VER.jar" -O minecraft_server.jar 2>&1 | grep "403" &> /dev/null
-
-if [ -f "eula.txt" ]; then
-    LC_ALL="en_US.UTF-8" perl -pi -e 's/false/true/g' eula.txt
-fi
-
-java -Xms1G -Xmx1G -jar minecraft_server.jar
+# Download Minecraft
+wget https://launcher.mojang.com/mc/game/1.12.2/server/886945bfb2b978778c3a0288fd7fab09d315b25f/server.jar
+# Run Minecraft
+java -Xmx1024M -Xms1024M -jar server.jar

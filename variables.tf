@@ -1,19 +1,19 @@
 variable "aws_credentials_location" {
-  type = "string"
+  type    = "string"
   default = "~/.aws/credentials"
 }
 
 variable "profile" {
-  type = "string"
+  type    = "string"
   default = "personal"
 }
 
 variable "server_name" {
-  type = "string"
+  type    = "string"
   default = "briantown"
 }
 
 variable "keypair_name" {
-  type = "string"
-  default = "minecraft_ec2"
+  type    = "string"
+  default = "briantown"
 }
